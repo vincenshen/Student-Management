@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html>
+{% load staticfiles %}
+<head>
+    <meta charset="utf-8" />
+    <meta name="student admin" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../static/img/logo2.ico">
+    <title>Students Admin</title>
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" />
+    <link href="{% static "css/font-awesome.css" %}" rel="stylesheet" />
+    <link href="{% static "css/custom.css" %}" rel="stylesheet" />
+    <link href="{% static "jquery-ui/jquery-ui.min.css" %}" rel="stylesheet">
+</head>
+<body>
+
+    <div id="wrapper">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="adjust-nav">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        <img src="../static/img/logo.png" />
+                    </a>
+                </div>
+                <div class="user-profile">
+                    {% if request.user.is_authenticated %}
+                        <span class="login-spn" >
+                            <a href="{% url "logout" %}" style="color:#fff;">Logout</a>
+                        </span>
+                        <span class="login-spn" >
+                            <a href="#" style="color:#fff;">Dear&nbsp;{{ request.user.username }},welcome!</a>
+                        </span>
+                    {% else %}
+                        <span class="login-spn" >
+                          <a href="{% url "login" %}" style="color:#fff;">Login</a>
+                        </span>
+                        <span class="login-spn" >
+                          <a href="{% url "register" %}" style="color:#fff;">Register</a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- /. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                    <li class="active-link">
+                        <a class="fa" id="sm" href="#"><i class="fa fa-android" aria-hidden="true"></i>Student List</a>
+                    </li>
+                    <li>
+                        <a class="fa" id="cns" href="#"><i class="fa fa-forward" aria-hidden="true"></i>Student Create</a>
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-lg-12 ">
+                        <hr />
+                        <div class="alert alert-info">
+                             <strong>Welcome Student Management ! </strong> You Have No pending Task For Today.
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+                  <!-- /. ROW  -->
+                <div id="student-list" class="row">
+                    <div class="table-responsive col-lg-12 col-md-12">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Grade</th>
+                                    <th>Course</th>
+                                    <th>Enroll_date</th>
+                                    <th>Configuration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td target="s-id">{{ student.id }}</td>
+                                    <td target="s-name">{{ student.name }}</td>
+                                    <td target="s-age">{{ student.age }}</td>
+                                    <td target="s-grade">{{ student.grade }}</td>
+                                    <td target="s-course">{{ student.course }}</td>
+                                    <td target="s-date">{{ student.enroll_date | stringformat:"s" }}</td>
+                                    <td class="col-lg-2 col-md-2">
+                                        <a href="" class="update btn btn-primary" data-toggle="modal" data-target="#ModifyModal">Modify</a>
+                                        <a href="" class="delete btn btn-primary" data-toggle="modal" data-target="#DeleteModal">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="new-student" class="row col-lg-6 col-md-6 hide">
+                    <div class="modal-body col-lg-6 col-md-6">
+                        {% if request.user.is_authenticated %}
+                            <form action="{% url "students:create" %}" method="post">
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Name:</label>
+                            <input type="text" class="form-control" name="name">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Age:</label>
+                            <input type="text" class="form-control" name="age">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Grade:</label>
+                            <input type="text" class="form-control" name="grade">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Course:</label>
+                            <input type="text" class="form-control" name="course">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Enroll_date:</label>
+                            <input type="text" class="form-control date" name="enroll_date">
+                          </div>
+                          <input type="submit" class="btn btn-primary" value="Create">
+                          {% csrf_token %}
+                        </form>
+                        {% else %}
+                           <div class="col-md-offset-12" role="dialog">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h5 class="modal-title">模态对话框</h5>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>您还未登录，不能创建学员。<a href="{% url "login" %}">点击我登录</a>&hellip;</p>
+                                  </div>
+                                </div><!-- /.modal-content -->
+                              </div><!-- /.modal-dialog -->
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+             <!-- /. PAGE INNER  -->
+        </div>
+         <!-- /. PAGE WRAPPER  -->
+    </div>
+
+    {% if request.user.is_authenticated %}
+        <div class="modal2 fade" id="ModifyModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">Student info</h4>
+                  </div>
+                  <div class="modal-body col-md-offset-3" style="width: 300px">
+                    <form action="{% url "students:update" %}" method="post">
+                      <div class="form-group">
+                        <label for="recipient-name" class="control-label">Name:</label>
+                        <input id="s-id" type="hidden" class="form-control" name="s-id">
+                        <input id="s-name" type="text" class="form-control" name="s-name">
+                      </div>
+                      <div class="form-group">
+                        <label for="recipient-name" class="control-label">Age:</label>
+                        <input type="text" class="form-control" id="s-age" name="s-age">
+                      </div>
+                      <div class="form-group">
+                        <label for="recipient-name" class="control-label">Grade:</label>
+                        <input type="text" class="form-control" id="s-grade" name="s-grade">
+                      </div>
+                      <div class="form-group">
+                        <label for="recipient-name" class="control-label">Course:</label>
+                        <input type="text" class="form-control" id="s-course" name="s-course">
+                      </div>
+                      <div class="form-group">
+                        <label for="recipient-name" class="control-label">Enroll_date:</label>
+                        <input type="text" class="form-control date" id="s-date" name="s-date">
+                      </div>
+                        <input style="width: 80px" type="button" class="btn btn-default" data-dismiss="modal" value="Close">
+                        <input style="width: 80px" type="submit" class="btn btn-primary" value="Modify">
+                      {% csrf_token %}
+                    </form>
+                  </div>
+                  <div class="modal-footer"></div>
+            </div>
+          </div>
+        </div>
+    {% else %}
+        <div class="modal fade" id="ModifyModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">模态对话框</h4>
+              </div>
+              <div class="modal-body">
+                <p>您还未登录，<a href="{% url "login" %}">点击我登录</a>&hellip;</p>
+              </div>
+              <div class="modal-footer">
+                  <input type="button" class="btn btn-default" data-dismiss="modal" value="Close">
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+        <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">模态对话框</h4>
+              </div>
+              <div class="modal-body">
+                <p>是否确定删除&hellip;</p>
+              </div>
+              <div class="modal-footer">
+                  <form action="{% url "students:delete" %}" method="post">
+                      <input id="s-d-id" type="hidden" name="s-d-id">
+                      <input type="button" class="btn btn-default" data-dismiss="modal" value="Close">
+                      <input type="submit" class="btn btn-primary" value="Delete">
+                      {% csrf_token %}
+                  </form>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div>
+    {% else %}
+        <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">模态对话框</h4>
+              </div>
+              <div class="modal-body">
+                <p>您还未登录，<a href="{% url "login" %}">点击我登录</a>&hellip;</p>
+              </div>
+              <div class="modal-footer">
+                  <input type="button" class="btn btn-default" data-dismiss="modal" value="Close">
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div>
+    {% endif %}
+
+    <div class="footer">
+        <div class="row">
+            <div class="col-lg-12" >
+                &copy;2017 Oldboy - S16 - 沈洪兵 | More Info <a href="http://www.cnblogs.com/vincenshen/" target="_blank" title="cnblogs">博客</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+    <script src="{% static "js/jquery.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/custom.js" %}"></script>
+    <script src="{% static "jquery-ui/jquery-ui.min.js" %}"></script>
+
+    <script>
+          $( function() {
+            $( ".date" ).datepicker({
+                dateFormat:"yy-mm-d"
+            });
+          }
+          );
+
+        $(".fa").click(function () {
+            var id=$(this).attr("id");
+            if(id=="sm"){
+                $("#student-list").removeClass("hide");
+                $("#new-student").addClass("hide");
+            }else {
+                $("#student-list").addClass("hide");
+                $("#new-student").removeClass("hide");
+            }
+        });
+
+        $(".update").click(function () {
+            var tds = $(this).parent().siblings("td");
+            tds.each(function () {
+                var k=$(this).attr("target");
+                var v=$(this).text();
+                $("input[id="+k+"]").val(v);
+            });
+        });
+
+        $(".delete").click(function () {
+            var tds=$(this).parent().siblings("td");
+            tds.each(function () {
+                var id=$(this).attr("target");
+                var v=$(this).text();
+                if(id=="s-id"){
+                    $("input[id='s-d-id']").val(v);
+                }
+            });
+        })
+
+    </script>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>Register_success</title>
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
+</head>
+<body>
+    <div class="container col-md-offset-5" style="margin-top: 100px">
+        <h4>恭喜您注册成功!</h4>
+        <a href="{% url "login" %}" class="btn btn-primary" style="width: 130px">立即登录</a>
+    </div> <!-- /container -->
+</body>
+</html>

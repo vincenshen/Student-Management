@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/login.css" %}">
+</head>
+<body>
+    <div class="container">
+
+      <form class="form-signin" action="{% url "login" %}" method="post">
+        <h4 class="form-signin-heading">(默认用户:wupeiqi 密码:123)</h4>
+        <label for="recipient-name" class="control-label">Username:</label>
+        <input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
+        <label for="recipient-name" class="control-label">Username:</label>
+        <input type="password" class="form-control" name="password" placeholder="Password" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        {% if msg %}
+            <label for="recipient-name" class="control-label" style="color: red;">{{ msg }}</label>
+        {% endif %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+          {% csrf_token %}
+        <label for="recipient-name" class="control-label" >没有账号？<a href="{% url "register" %}">点击我注册&hellip;</a></label>
+      </form>
+
+    </div> <!-- /container -->
+</body>
+</html>
